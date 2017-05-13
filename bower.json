@@ -1,0 +1,30 @@
+{
+  "name": "kie-server-execute",
+  "authors": [
+    "Serhii Pahuta <spahuta@redhat.com>"
+  ],
+  "description": "",
+  "main": "kie-server-execute.html",
+  "keywords": [
+    "webcomponents",
+    "polymer",
+    "kie",
+    "kie-server",
+    "bpm",
+    "bpms"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "2.0.0-rc.7",
+    "iron-ajax": "2.0-preview"
+  }
+}

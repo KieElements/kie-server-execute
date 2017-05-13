@@ -1,0 +1,128 @@
+<!--
+******* Author: Serhii Pahuta
+******* This code is a part of master's thesis: Polymer Elements for a Business Process Management System
+******* 2017 Brno
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
+
+<dom-module id="kie-server-execute">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-ajax
+      verbose
+      id="ajax"
+      url="[[url]]"
+      method="[[method]]"
+      body="[[body]]"
+      content-type="[[contentType]]"
+      params="[[params]]"
+      with-credentials="true"
+      on-response="_handleResponse"
+      on-error="_handleError">
+    </iron-ajax>
+  </template>
+
+  <script>
+    class KieServerExecute extends Polymer.Element {
+      static get is() { return 'kie-server-execute'; }
+
+
+      static get properties() {
+          return {
+            serverUrl: {
+                type: String,
+                value: "http://localhost:8080/kie-execution-server/services/rest/server/",
+                notify: true,
+                readOnly: true
+            },
+            url: {
+                type: String
+            },
+            op: {
+                type: String,
+                observer: "_changeUrl"
+            },
+            method: {
+                type: String,
+                value: "GET"
+            },
+            body: {
+                type: String
+            },
+            contentType: {
+                type: String
+            },
+            params: {
+                type: Object
+            },
+            username: {
+                type: String,
+                value: "kie-server"
+            },
+            password: {
+                type: String,
+                value: "kie-server"
+            },
+            acceptType: {
+                type: String,
+                value: "application/json"
+            },
+            error: {
+                type: Object,
+                notify: true
+            },
+            response: {
+                type: Object,
+                notify: true
+            }
+          }
+      }
+
+      ready() {
+          super.ready();
+      }
+
+      execute() {
+        this._makeHeaders();
+        this.$.ajax.generateRequest();
+      }
+
+      _changeUrl() {
+        this.url = this.serverUrl + this.op;
+      }
+
+      _makeHeaders() {
+        var obj = {};
+        obj.Accept = this.acceptType;
+        obj.Authorization = "Basic " + btoa(this.username + ":" + this.password);
+        obj["X-Requested-With"] = "XMLHttpRequest";
+        this.$.ajax.headers = obj;
+        if (this.acceptType.indexOf("json") > -1) {
+          this.$.ajax.handleAs = "json";
+        } else if (this.acceptType.indexOf("xml") > -1) {
+          this.$.ajax.handleAs = "text";
+        }
+      }
+
+      _handleResponse(response) {
+        this.response = response.detail.response;
+        this.dispatchEvent(new CustomEvent('kieresponse', { bubbles: false, detail:this.response}));
+      }
+
+      _handleError(error) {
+          console.log(error);
+      }
+
+    }
+
+    customElements.define(KieServerExecute.is, KieServerExecute);
+  </script>
+</dom-module>
